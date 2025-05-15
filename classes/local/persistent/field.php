@@ -48,14 +48,14 @@ class field extends persistent {
             ],
             'type' => [
                 'null' => NULL_NOT_ALLOWED,
-                'type' => PARAM_INT,
+                'type' => PARAM_TEXT,
                 'message' => new lang_string('invaliddata', 'assignsubmission_mawang', 'type'),
             ],
             'name' => [
                 'null' => NULL_NOT_ALLOWED,
                 'type' => PARAM_TEXT,
                 'message' => new lang_string('invaliddata', 'assignsubmission_mawang', 'name'),
-            ],
+            ]
         ];
     }
 }

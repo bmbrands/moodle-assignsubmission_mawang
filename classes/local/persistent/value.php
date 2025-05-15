@@ -41,11 +41,6 @@ class value extends persistent {
      */
     protected static function define_properties() {
         return [
-            'submission' => [
-                'null' => NULL_NOT_ALLOWED,
-                'type' => PARAM_INT,
-                'message' => new lang_string('invaliddata', 'assignsubmission_mawang', 'submission'),
-            ],
             'fieldid' => [
                 'null' => NULL_NOT_ALLOWED,
                 'type' => PARAM_INT,
@@ -62,4 +57,5 @@ class value extends persistent {
                 'message' => new lang_string('invaliddata', 'assignsubmission_mawang', 'data'),
             ],
         ];
+    }
 }

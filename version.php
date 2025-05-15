@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component    = 'assignsubmission_mawang';
 $plugin->release      = '1.0';
-$plugin->version      = 2025042901;
+$plugin->version      = 2025043000;
 $plugin->requires     = 2024100700;
 $plugin->supported    = [405, 500];
 $plugin->maturity     = MATURITY_STABLE;
