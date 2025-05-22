@@ -537,7 +537,7 @@ class assign_submission_mawang extends assign_submission_plugin {
         $validtypes = ['text', 'textarea', 'select', 'checkbox', 'radio', 'filepicker', 'date', 'datetime'];
         $defaultoptions = [
             'text' => ['size' => '140'],
-            'textarea' => ['rows' => 5, 'cols' => 50],
+            'textarea' => ['rows' => 10, 'cols' => 50],
             'select' => ['multiple' => false],
             'checkbox' => '',
             'radio' => ['group' => 1],
