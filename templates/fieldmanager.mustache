@@ -1,0 +1,97 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template assignsubmission_mawang/fieldmanager
+
+    TODO describe template fieldmanager
+
+    Example context (json):
+    {
+        "fields": [
+            {
+                "id": 1,
+                "name": "field1",
+                "type": "text",
+            },
+            {
+                "id": 2,
+                "name": "field2",
+                "type": "textarea",
+            }
+        ],
+        "fieldtypes": [
+            {
+                "name": "text",
+                "label": "Text input single line"
+            },
+            {
+                "name": "textarea",
+                "label": "Textarea"
+            },
+            {
+                "name": "select",
+                "label": "Select"
+            },
+            {
+                "name": "checkbox",
+                "label": "Checkbox"
+            },
+            {
+                "name": "radio",
+                "label": "Radio"
+            },
+            {
+                "name": "filepicker",
+                "label": "File picker"
+            },
+            {
+                "name": "date",
+                "label": "Date"
+            },
+            {
+                "name": "datetime",
+                "label": "Date and time"
+            }
+        ]
+    }
+}}
+<div class="mawang-fieldmanager" data-region="mawang-fieldmanager" data-assignmentid="{{assignmentid}}">
+    <div data-region="fields-container">
+        {{#fields}}
+            {{> assignsubmission_mawang/fields}}
+        {{/fields}}
+    </div>
+    <div class="actions d-flex mt-3">
+        <button type="button" class="btn btn-secondary" data-action="add-field">
+            {{#str}}addfield, assignsubmission_mawang{{/str}}
+        </button>
+        <button type="button" class="btn btn-success ml-2" data-action="save-fields">
+            {{#str}}savefields, assignsubmission_mawang{{/str}}
+        </button>
+        <div class="results ml-2">
+            <div class="text-success d-none" data-region="success-message">
+                {{#str}}fieldssaved, assignsubmission_mawang{{/str}}
+            </div>
+            <div class="text-danger d-none" data-region="error-message">
+                {{#str}}fieldssavederror, assignsubmission_mawang{{/str}}
+            </div>
+        </div>
+    </div>
+</div>
+{{#js}}
+   require(['assignsubmission_mawang/fieldmanager']);
+{{/js}}

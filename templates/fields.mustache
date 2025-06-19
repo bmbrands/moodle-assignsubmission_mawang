@@ -1,0 +1,49 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template assignsubmission_mawang/fields
+
+    TODO describe template fields
+
+    Example context (json):
+    {
+    }
+}}
+{{#fields}}
+    <div class="card border w-100 mb-3 {{#deleted}}d-none{{/deleted}}" {{#deleted}}data-deleted="1"{{/deleted}} data-region="field" data-fieldid="{{id}}">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>{{#str}}fieldnumber, assignsubmission_mawang, {{num}}{{/str}}</span>
+            <button type="button" class="btn btn-danger btn-sm" data-action="delete-field" data-fieldid="{{id}}">
+                {{#str}}deletefield, assignsubmission_mawang{{/str}}
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="form-group d-flex">
+                <label for="field-name">{{#str}}fieldname, assignsubmission_mawang{{/str}}</label>
+                <input type="text" class="form-control" id="field-name" name="fieldname" value="{{name}}" placeholder="{{#str}}fieldnameplaceholder, assignsubmission_mawang{{/str}}">
+            </div>
+            <div class="form-group d-flex">
+                <label for="field-type">{{#str}}fieldtype, assignsubmission_mawang{{/str}}</label>
+                <select class="form-control" id="field-type" name="fieldtype">
+                    {{#fieldtypes}}
+                        <option value="{{name}}" {{#selected}}selected{{/selected}}>{{label}}</option>
+                    {{/fieldtypes}}
+                </select>
+            </div>
+        </div>
+    </div>
+{{/fields}}

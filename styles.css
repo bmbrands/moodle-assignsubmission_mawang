@@ -1,0 +1,16 @@
+.path-mod-assign .form-control-static[data-name="fieldmanager"] {
+    flex: 1 1 auto;
+}
+
+.path-mod-assign .form-control-static[data-name="fieldmanager"] .form-group label {
+    min-width: 200px;
+}
+table#submissions .assignsubmission_mawang_summary .name,
+table#submissions .assignsubmission_mawang_summary .value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+    font-size: 0.8rem;
+    margin: 0;
+}

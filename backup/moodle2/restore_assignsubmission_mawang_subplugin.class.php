@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use assignsubmission_mawang\local\persistent\field;
+
 /**
  * Provides the information to restore Mawang submissions
  *
@@ -33,7 +35,10 @@ class restore_assignsubmission_mawang_subplugin extends restore_subplugin {
         $elename = $this->get_namefor('submission');
 
         // We used get_recommended_name() so this works.
-        $elepath = $this->get_pathfor('/submission_mawang');
+        $elepath = $this->get_pathfor('/assignsubmission_mawang');
+        $paths[] = new restore_path_element($elename, $elepath);
+
+        $elepath = $this->get_pathfor('/fields');
         $paths[] = new restore_path_element($elename, $elepath);
 
         return $paths;
@@ -59,4 +64,19 @@ class restore_assignsubmission_mawang_subplugin extends restore_subplugin {
         // TODO: restore files if necessary. Substitute 'fileareaname' with a correct filearea name.
         $this->add_related_files('assignsubmission_mawang', 'fileareaname', 'submission', null, $oldsubmissionid);
     }
+
+    /**
+     * Processes one assignsubmission_mawang_fields element
+     *
+     * @param mixed $data
+     */
+    public function process_assignsubmission_mawang_submission_fields($data) {
+        $field = new field();
+
+        $field->set('type', $data['type']);
+        $field->set('name', $data['name']);
+        $field->set('assignmentid', $this->get_new_parentid('assign'));
+        $field->save();
+    }
+
 }

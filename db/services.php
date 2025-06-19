@@ -15,18 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for Mawang
+ * External functions and service declaration for Simple Form
+ *
+ * Documentation: {@link https://moodledev.io/docs/apis/subsystems/external/description}
  *
  * @package    assignsubmission_mawang
+ * @category   webservice
  * @copyright  2025 Bas Brands <bas@sonsbeekmedia.nl>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component    = 'assignsubmission_mawang';
-$plugin->release      = '1.0';
-$plugin->version      = 2025060400;
-$plugin->requires     = 2024100700;
-$plugin->supported    = [405, 500];
-$plugin->maturity     = MATURITY_STABLE;
+$functions = [
+    'assignsubmission_mawang_get_fields' => [
+        'classname'   => \assignsubmission_mawang\external\get_fields::class,
+        'methodname'  => 'execute',
+        'description' => 'Get the fields for a specific assignment.',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+    'assignsubmission_mawang_update_fields' => [
+        'classname'   => \assignsubmission_mawang\external\update_fields::class,
+        'methodname'  => 'execute',
+        'description' => 'Save the fields for a specific assignment.',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
+];
+
