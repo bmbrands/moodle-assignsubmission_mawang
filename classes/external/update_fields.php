@@ -66,7 +66,8 @@ class update_fields extends external_api {
      */
     public static function execute(int $assignmentid, array $fields): array {
 
-        $context = context_module::instance($assignmentid);
+        list ($course, $cm) = get_course_and_cm_from_instance($assignmentid, 'assign');
+        $context = context_module::instance($cm->id);
         self::validate_context($context);
 
         foreach ($fields as $fielddata) {

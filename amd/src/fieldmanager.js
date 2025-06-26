@@ -138,9 +138,10 @@ class FieldManager {
      * @returns {Promise<void>} A promise that resolves when the field is added.
      */
     async addField() {
+        await this.saveFields(); // Save existing fields before adding a new one.
         const newField = {
             name: '',
-            type: 'text',
+            type: 'textarea',
         };
 
         this.fields.push(newField);

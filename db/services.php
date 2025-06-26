@@ -42,5 +42,12 @@ $functions = [
         'type'        => 'write',
         'ajax'        => true,
     ],
+    'assignsubmission_mawang_store_draft' => [
+        'classname'   => \assignsubmission_mawang\external\store_draft::class,
+        'methodname'  => 'execute',
+        'description' => 'Store a draft value for a field.',
+        'type'        => 'write',
+        'ajax'        => true,
+    ],
 ];
 

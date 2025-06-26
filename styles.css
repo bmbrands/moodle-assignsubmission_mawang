@@ -14,3 +14,22 @@ table#submissions .assignsubmission_mawang_summary .value {
     font-size: 0.8rem;
     margin: 0;
 }
+
+.saveconfirm .defaulticon .icon {
+    color: var(--success);
+}
+.saveconfirm .savingicon .icon {
+    color: var(--warning);
+}
+.saveconfirm .savingicon {
+    display: none;
+}
+.saveconfirm.saving .defaulticon {
+    display: none;
+}
+.saveconfirm.saving .savingicon {
+    display: inline-block;
+}
+.path-mod-assign .mawang-form #fgroup_id_buttonar {
+    display: none;
+}

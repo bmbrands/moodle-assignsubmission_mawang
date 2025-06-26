@@ -35,9 +35,5 @@ function xmldb_assignsubmission_mawang_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2025042901) {
-    }
-
-
     return true;
 }

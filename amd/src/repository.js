@@ -65,4 +65,20 @@ export default class Repository {
         });
     }
 
+    /**
+     * Store the draft data.
+     * @param {Object} data The data to store.
+     * @returns {Promise<Object>} A promise that resolves with the stored data.
+     */
+    static storeDraft(data) {
+        return Ajax.call([{
+            methodname: 'assignsubmission_mawang_store_draft',
+            args: data
+        }])[0].then((response) => {
+            if (response.error) {
+                Notification.exception(response.error);
+            }
+            return response;
+        });
+    }
 }

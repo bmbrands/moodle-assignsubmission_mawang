@@ -38,8 +38,8 @@ class restore_assignsubmission_mawang_subplugin extends restore_subplugin {
         $elepath = $this->get_pathfor('/assignsubmission_mawang');
         $paths[] = new restore_path_element($elename, $elepath);
 
-        $elepath = $this->get_pathfor('/fields');
-        $paths[] = new restore_path_element($elename, $elepath);
+        // $elepath = $this->get_pathfor('/fields');
+        // $paths[] = new restore_path_element($elename, $elepath);
 
         return $paths;
     }

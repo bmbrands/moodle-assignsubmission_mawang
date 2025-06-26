@@ -53,9 +53,8 @@ class get_fields extends external_api {
      * @return array
      */
     public static function execute(int $assignmentid): array {
-        global $DB;
-
-        $context = context_module::instance($assignmentid);
+        list ($course, $cm) = get_course_and_cm_from_instance($assignmentid, 'assign');
+        $context = context_module::instance($cm->id);
         self::validate_context($context);
         $fieldtypes = mawang::get_valid_fieldtypes();
         $fieldtypes = array_map(function($fieldtype) {
@@ -73,7 +72,7 @@ class get_fields extends external_api {
                         'id' => 0,
                         'assignmentid' => $assignmentid,
                         'name' => '',
-                        'type' => '',
+                        'type' => 'textarea',
                     ]
                 ],
                 'fieldtypes' => $fieldtypes,
