@@ -28,20 +28,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = [
-    'assignsubmission_mawang_get_fields' => [
-        'classname'   => \assignsubmission_mawang\external\get_fields::class,
-        'methodname'  => 'execute',
-        'description' => 'Get the fields for a specific assignment.',
-        'type'        => 'read',
-        'ajax'        => true,
-    ],
-    'assignsubmission_mawang_update_fields' => [
-        'classname'   => \assignsubmission_mawang\external\update_fields::class,
-        'methodname'  => 'execute',
-        'description' => 'Save the fields for a specific assignment.',
-        'type'        => 'write',
-        'ajax'        => true,
-    ],
     'assignsubmission_mawang_store_draft' => [
         'classname'   => \assignsubmission_mawang\external\store_draft::class,
         'methodname'  => 'execute',

@@ -32,13 +32,10 @@ class restore_assignsubmission_mawang_subplugin extends restore_subplugin {
     protected function define_submission_subplugin_structure() {
         $paths = [];
 
-        $elename = $this->get_namefor('submission');
+        // $elename = $this->get_namefor('submission');
 
-        // We used get_recommended_name() so this works.
-        $elepath = $this->get_pathfor('/assignsubmission_mawang');
-        $paths[] = new restore_path_element($elename, $elepath);
-
-        // $elepath = $this->get_pathfor('/fields');
+        // // We used get_recommended_name() so this works.
+        // $elepath = $this->get_pathfor('/mawang_value');
         // $paths[] = new restore_path_element($elename, $elepath);
 
         return $paths;
@@ -49,34 +46,16 @@ class restore_assignsubmission_mawang_subplugin extends restore_subplugin {
      *
      * @param mixed $data
      */
-    public function process_assignsubmission_mawang_submission($data) {
+    public function process_assignsubmission_value_mawang($data) {
         global $DB;
 
-        $data = (object)$data;
-        $oldsubmissionid = $data->submission;
-        $data->assignment = $this->get_new_parentid('assign');
-        // The mapping is set in the restore for the core assign activity
-        // when a submission node is processed.
-        $data->submission = $this->get_mappingid('submission', $data->submission);
+        // $data = (object)$data;
+        // $oldsubmissionid = $data->submission;
+        // // The mapping is set in the restore for the core assign activity
+        // // when a submission node is processed.
+        // $data->submission = $this->get_mappingid('submission', $data->submission);
 
-        $DB->insert_record('assignsubmission_mawang', $data);
-
-        // TODO: restore files if necessary. Substitute 'fileareaname' with a correct filearea name.
-        $this->add_related_files('assignsubmission_mawang', 'fileareaname', 'submission', null, $oldsubmissionid);
-    }
-
-    /**
-     * Processes one assignsubmission_mawang_fields element
-     *
-     * @param mixed $data
-     */
-    public function process_assignsubmission_mawang_submission_fields($data) {
-        $field = new field();
-
-        $field->set('type', $data['type']);
-        $field->set('name', $data['name']);
-        $field->set('assignmentid', $this->get_new_parentid('assign'));
-        $field->save();
+        // $DB->insert_record('assignsubmission_mawang_value', $data);
     }
 
 }

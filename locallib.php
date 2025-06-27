@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use assignsubmission_mawang\local\persistent\submission;
-use assignsubmission_mawang\local\persistent\field;
 use assignsubmission_mawang\local\persistent\value;
 use assignsubmission_mawang\local\persistent\draft;
 use assignsubmission_mawang\local\api\mawang;
@@ -47,7 +45,10 @@ class assign_submission_mawang extends assign_submission_plugin {
 
         $submissionid = $submission ? $submission->id : 0;
         if ($submissionid) {
-            submission::get_record($submissionid)->delete();
+            $values = value::get_records(['submissionid' => $submissionid]);
+            foreach ($values as $value) {
+                $value->delete();
+            }
         }
         return true;
     }
@@ -62,68 +63,41 @@ class assign_submission_mawang extends assign_submission_plugin {
         global $PAGE, $OUTPUT;
         // Add a button to add a new field.
         $issetup = $this->assignment->get_default_instance();
-        if (!$issetup) {
-            // If the assignment is not set up yet, we cannot configure the fields.
-            $mform->addElement('static', 'configureform', get_string('configureform', 'assignsubmission_mawang'),
-                get_string('configureformdescription', 'assignsubmission_mawang'));
-            $mform->hideIf('configureform', 'assignsubmission_mawang_enabled', 'notchecked');
-            return;
-        }
+        $assignmentid = $issetup ? $this->assignment->get_default_instance()->id : -1;
 
-        // Show configured fields.
+        $fieldtypes = mawang::get_valid_fieldtypes();
+        $fieldtypes = array_map(function($fieldtype) {
+            return (object)[
+                'name' => $fieldtype['name'],
+                'label' => $fieldtype['label'],
+            ];
+        }, $fieldtypes);
+
         $fields = $this->get_fields();
 
         $fieldsmanager = $OUTPUT->render_from_template('assignsubmission_mawang/fieldmanager', [
             'fields' => [],
-            'fieldtypes' => [],
-            'assignmentid' => $this->assignment->get_default_instance()->id,
+            'fieldtypes' => $fieldtypes,
+            'assignmentid' => $assignmentid,
         ]);
 
         $mform->addElement('static', 'fieldmanager', '', $fieldsmanager);
+        $mform->addElement('hidden', 'assignsubmission_mawang_config', json_encode($fields));
+        $mform->setType('assignsubmission_mawang_config', PARAM_RAW);
+        $mform->addElement('hidden', 'assignsubmission_mawang_fieldtypes', json_encode($fieldtypes));
+        $mform->setType('assignsubmission_mawang_fieldtypes', PARAM_RAW);
         $mform->hideIf('fieldmanager', 'assignsubmission_mawang_enabled', 'notchecked');
         return;
-        $count = 0;
-        foreach ($fields as $field) {
-            $fieldtype = 'fieldtype_' . $field['id'];
-            $fieldname = 'fieldname_' . $field['id'];
-            $fieldremove = 'removefield_' . $field['id'];
-            $fieldgroupname = 'group' . $field['id'];
-            $removeurl = new moodle_url('/mod/assign/submission/mawang/action.php',
-                [
-                    'id' => $this->assignment->get_default_instance()->id,
-                    'fieldid' => $field['id'],
-                    'action' => 'deletefield',
-                    'returnurl' => urlencode($PAGE->url)
-                ]);
-            $removelink = html_writer::link($removeurl, get_string('remove'), ['class' => 'removefield']);
-            $fieldid = 'fieldid_' . $field['id'];
-            $fieldgroup = [
-                $mform->createElement('select', $fieldtype, get_string('fieldtype', 'assignsubmission_mawang'), $fieldtypes),
-                $mform->createElement('text', $fieldname, get_string('fieldname', 'assignsubmission_mawang'), ['size' => '140']),
-                $mform->createElement('html', $removelink),
-                $mform->createElement('hidden', $fieldid, 0),
-            ];
-            $mform->setType($fieldid, PARAM_INT);
-            $mform->setType($fieldname, PARAM_TEXT);
-            $mform->setdefault($fieldtype, $field['type']);
-            $mform->setdefault($fieldname, $field['name']);
-            $mform->setdefault($fieldid, $field['id']);
-            $mform->addGroup($fieldgroup, $fieldgroupname, get_string('fieldandname', 'assignsubmission_mawang', ++$count), ' ', false);
-            $mform->hideif($fieldgroupname, 'assignsubmission_mawang_enabled', 'notchecked');
-            $mform->hideIf($fieldtype, 'assignsubmission_mawang_enabled', 'notchecked');
-            $mform->hideIf($fieldname, 'assignsubmission_mawang_enabled', 'notchecked');
-        }
+    }
 
-        $addurl = new moodle_url('/mod/assign/submission/mawang/action.php',
-            [
-                'id' => $this->assignment->get_default_instance()->id,
-                'action' => 'addfield',
-                'returnurl' => urlencode($PAGE->url)
-            ]);
-        $addlink = html_writer::link($addurl, get_string('addfield', 'assignsubmission_mawang'), ['class' => 'addfield']);
-
-        // Add a button to add a new field.
-        $mform->addElement('html', $addlink);
+    /**
+     * Save the settings for mawang submission plugin
+     * @param stdClass $data The data from the form
+     * @return bool
+     */
+    public function save_settings(stdClass $data) {
+        $this->set_config('fields', $data->assignsubmission_mawang_config ?? '');
+        return true;
     }
 
     /**
@@ -144,16 +118,12 @@ class assign_submission_mawang extends assign_submission_plugin {
         $mform->addElement('hidden', 'instanceid', $this->assignment->get_instance()->id);
         $mform->setType('instanceid', PARAM_INT);
 
-        $validtypes = ['text', 'textarea', 'select', 'checkbox', 'radio', 'filepicker', 'date', 'datetime'];
+        $validtypes = ['text', 'textarea', 'date', 'html'];
         $defaultoptions = [
             'text' => ['size' => '140'],
             'textarea' => ['rows' => 10, 'cols' => 50],
-            'select' => ['multiple' => false],
-            'checkbox' => '',
-            'radio' => ['group' => 1],
-            'filepicker' => ['maxbytes' => 100, 'accepted_types' => '*'],
             'date' => ['startyear' => 2000, 'stopyear' => 2030],
-            'datetime' => ['startyear' => 2000, 'stopyear' => 2030],
+            'html' => [],
         ];
 
         // Add the fields to the form.
@@ -161,7 +131,7 @@ class assign_submission_mawang extends assign_submission_plugin {
             $fieldname = 'mawang[' . $field['id'] . ']';
             $fieldtype = in_array($field['type'], $validtypes) ? $field['type'] : 'text';
             if ($fieldtype == 'html') {
-                $mform->addElement('html', $field['name']);
+                $mform->addElement('html', $field['name'],  $field['name']);
                 continue;
             }
             $options = $defaultoptions[$fieldtype] ?? [];
@@ -200,26 +170,22 @@ class assign_submission_mawang extends assign_submission_plugin {
      */
     private function get_fields() {
 
-        $fields = field::get_records(['assignmentid' => $this->assignment->get_default_instance()->id]);
-        $fieldarray = [];
-        $num = 0;
-        foreach ($fields as $field) {
-            $fieldarray[] = [
-                'id' => $field->get('id'),
-                'type' => $field->get('type'),
-                'name' => $field->get('name'),
-                'num' => ++$num,
-            ];
+        $fields = $this->get_config('fields');
+        if (empty($fields)) {
+            return [];
         }
-        if (empty($fieldarray)) {
-            $fieldarray[] = [
-                'id' => 0,
-                'type' => 'text',
-                'name' => get_string('newfield', 'assignsubmission_mawang'),
-                'num' => 1,
-            ];
+        $fields = json_decode($fields, true);
+        if (empty($fields) || !is_array($fields)) {
+            return [];
         }
-        return $fieldarray;
+        return array_map(function($field) {
+            return [
+                'id' => $field['id'] ?? 0,
+                'assignmentid' => $field['assignmentid'] ?? -1,
+                'name' => $field['name'] ?? '',
+                'type' => $field['type'] ?? 'textarea',
+            ];
+        }, $fields);
     }
 
     /**
@@ -231,14 +197,8 @@ class assign_submission_mawang extends assign_submission_plugin {
      * @return bool
      */
     public function save(stdClass $submission, stdClass $data) {
-        $currentsubmission = submission::get_record(['submission' => $submission->id]);
         $values = value::get_records(['submissionid' => $submission->id]);
-        if (!$currentsubmission) {
-            $currentsubmission = new submission();
-            $currentsubmission->set('assignment', $submission->assignment);
-            $currentsubmission->set('submission', $submission->id);
-            $currentsubmission->save();
-        }
+        $assignmentid = $this->assignment->get_default_instance()->id;
         foreach ($data->mawang as $fieldid => $value) {
             $set = false;
             foreach ($values as $field) {
@@ -251,6 +211,7 @@ class assign_submission_mawang extends assign_submission_plugin {
             if (!$set) {
                 $field = new value();
                 $field->set('submissionid', $submission->id);
+                $field->set('assignment', $assignmentid);
                 $field->set('fieldid', $fieldid);
                 $field->set('data', $value);
                 $field->save();
@@ -287,7 +248,7 @@ class assign_submission_mawang extends assign_submission_plugin {
      * @return bool
      */
     public function is_empty(stdClass $submission) {
-        $currentsubmission = submission::get_record(['submission' => $submission->id]);
+        $currentsubmission = value::get_record(['submissionid' => $submission->id]);
         return !$currentsubmission;
     }
 
@@ -301,13 +262,19 @@ class assign_submission_mawang extends assign_submission_plugin {
     public function view_summary(stdClass $submission, &$showviewlink) {
         global $OUTPUT;
         $templatecontext = [];
-        $fields = field::get_records(['assignmentid' => $this->assignment->get_default_instance()->id]);
+        $fields = $this->get_fields();
         foreach ($fields as $field) {
-            $value = value::get_record(['submissionid' => $submission->id, 'fieldid' => $field->get('id')]);
+            $value = value::get_record(['submissionid' => $submission->id, 'fieldid' => $field['id']]);
+            $data = $value ? $value->get('data') : '';
+            if (empty($data)) {
+                continue; // Skip empty fields.
+            }
+            $istimestamp = is_numeric($data) && (int)$data > 0;
             $templatecontext['fields'][] = [
-                'name' => $field->get('name'),
-                'value' => $value ? $value->get('data') : '',
-                'type' => $field->get('type'),
+                'name' => $field['name'],
+                'value' => $data,
+                'type' => $field['type'],
+                'datefield' => $istimestamp && in_array($field['type'], ['date_selector', 'date_time_selector']),
             ];
         }
         return $OUTPUT->render_from_template('assignsubmission_mawang/summary', $templatecontext);
@@ -319,17 +286,10 @@ class assign_submission_mawang extends assign_submission_plugin {
      * @return bool
      */
     public function delete_instance() {
-        $submissions = submission::get_records(['assignment' => $this->assignment->get_default_instance()->id]);
-        foreach ($submissions as $submission) {
-            $values = value::get_records(['submissionid' => $submission->get('submission')]);
-            foreach ($values as $value) {
-                $value->delete();
-            }
-            $submission->delete();
-        }
-        $fields = field::get_records(['assignmentid' => $this->assignment->get_default_instance()->id]);
-        foreach ($fields as $field) {
-            $field->delete();
+        $assignmentid = $this->assignment->get_default_instance()->id;
+        $values = value::get_records(['assignment' => $assignmentid]);
+        foreach ($values as $value) {
+            $value->delete();
         }
         $drafts = draft::get_records(['assignment' => $this->assignment->get_default_instance()->id]);
         foreach ($drafts as $draft) {

@@ -21,7 +21,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import Repository from './repository';
 import Templates from 'core/templates';
 
 /**
@@ -46,13 +45,37 @@ class FieldManager {
      * Initializes the FieldManager.
      */
     constructor() {
-        this.renderFields();
         const rootElement = document.querySelector('[data-region="mawang-fieldmanager"]');
+        const form = document.querySelector('form[action="modedit.php"]');
+        const fieldtypesInput = document.querySelector('[name="assignsubmission_mawang_fieldtypes"]');
+        if (!rootElement || !form || !fieldtypesInput) {
+            throw new Error('Required elements not found in the DOM.');
+        }
+        // Parse the fieldtypes from the input value.
+        try {
+            this.fieldtypes = JSON.parse(fieldtypesInput.value);
+        } catch (e) {
+            throw new Error('Failed to parse fieldtypes from input value: ' + e.message);
+        }
+        this.renderFields();
+
         rootElement.addEventListener('click', (e) => {
             let btn = e.target.closest('[data-action]');
             if (btn) {
                 e.preventDefault();
                 this.actions(btn);
+            }
+        });
+        form.addEventListener('input', async(e) => {
+            let input = e.target.closest('.mawang-fieldmanager input');
+            if (input) {
+                // If the input is a field name, we need to save the fields.
+                await this.saveFields();
+            }
+            let select = e.target.closest('.mawang-fieldmanager select');
+            if (select) {
+                // If the select is a field type, we need to save the fields.
+                await this.saveFields();
             }
         });
     }
@@ -75,6 +98,41 @@ class FieldManager {
     }
 
     /**
+     * Set the configuration for the field manager.
+     * @param {Object} fields The configuration object.
+     */
+    setConfig(fields) {
+        const config = document.querySelector('[name="assignsubmission_mawang_config"]');
+        if (!config) {
+            throw new Error('Configuration input not found.');
+        }
+        // Convert the fields array to a JSON string and set it as the value of the config input.
+        config.value = JSON.stringify(fields);
+    }
+
+    /**
+     * Get the configuration for the field manager.
+     * @returns {Object} fields The configuration object.
+     */
+    getConfig() {
+        const config = document.querySelector('[name="assignsubmission_mawang_config"]');
+        if (!config) {
+            throw new Error('Configuration input not found.');
+        }
+        if (!config.value) {
+            this.addField(); // If no config value, add a new field.
+            return;
+        }
+        // Parse the JSON string from the config input and return it as an object.
+        const fields = JSON.parse(config.value);
+        if (!fields || !Array.isArray(fields) || fields.length === 0) {
+            this.addField();
+        } else {
+            this.fields = fields;
+        }
+    }
+
+    /**
      * Fetch the field data from the UI
      */
     getFieldsFromUI() {
@@ -84,7 +142,7 @@ class FieldManager {
         }
         const fieldCards = rootElement.querySelectorAll('[data-region="field"]');
         if (fieldCards.length === 0) {
-            throw new Error('No fields containers found.');
+            return []; // No fields found, return an empty array.
         }
         // Collect the fields data from the UI.
         const fields = [];
@@ -119,18 +177,9 @@ class FieldManager {
         if (!rootElement) {
             throw new Error('FieldManager root element not found.');
         }
-        const args = {
-            assignmentid: rootElement.dataset.assignmentid,
-            fields: this.getFieldsFromUI(),
-        };
-        const response = await Repository.updateFields(args);
-        if (response) {
-            this.fields = response.fields || [];
-            this.fieldtypes = response.fieldtypes || [];
-            await this.renderFields();
-        } else {
-            throw new Error('Failed to save fields.');
-        }
+        this.fields = this.getFieldsFromUI();
+        this.setConfig(this.fields); // Set the configuration with the current fields.
+        return; // No need to save fields if assignment ID is -1.
     }
 
     /**
@@ -164,34 +213,9 @@ class FieldManager {
         }
 
         // Remove the field from the fields array.
-        this.fields.forEach((field) => {
-            if (field.id && field.id.toString() === fieldId) {
-                field.deleted = true; // Mark the field for deletion.
-            }
-        });
+        this.fields = this.fields.filter(field => field.id !== parseInt(fieldId, 10));
         // Re-render the fields.
         await this.renderFields();
-    }
-
-    /**
-     * Fetches the fields from the Mawang repository.
-     *
-     * @returns {Promise<Object>} A promise that resolves with the fields data.
-     */
-    async getFields() {
-        const rootElement = document.querySelector('[data-region="mawang-fieldmanager"]');
-        if (!rootElement) {
-            throw new Error('FieldManager root element not found.');
-        }
-
-        const args = {
-            assignmentid: rootElement.dataset.assignmentid,
-        };
-        const response = await Repository.getFields(args);
-        if (response) {
-            this.fields = response.fields || [];
-            this.fieldtypes = response.fieldtypes || [];
-        }
     }
 
     /**
@@ -200,10 +224,12 @@ class FieldManager {
      */
     async parseFields() {
         if (this.fields.length == 0) {
-            await this.getFields();
+            this.getConfig();
         }
+        let fieldcount = 0;
         // Create a copy of the fieldtypes to avoid modifying the original array.
         this.fields.forEach((field) => {
+            field.id = ++fieldcount; // Assign a unique ID to each field.
             const fieldtypes = this.fieldtypes.map(type => structuredClone(type));
             // Add the selected attribute to the fieldtypes.
             fieldtypes.forEach((type) => {

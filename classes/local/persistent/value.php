@@ -46,6 +46,11 @@ class value extends persistent {
                 'type' => PARAM_INT,
                 'message' => new lang_string('invaliddata', 'assignsubmission_mawang', 'fieldid'),
             ],
+            'assignment' => [
+                'null' => NULL_NOT_ALLOWED,
+                'type' => PARAM_INT,
+                'message' => new lang_string('invaliddata', 'assignsubmission_mawang', 'assignment'),
+            ],
             'submissionid' => [
                 'null' => NULL_NOT_ALLOWED,
                 'type' => PARAM_INT,

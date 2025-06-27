@@ -26,6 +26,6 @@
 {{#fields}}
     <div class="assignsubmission_mawang_summary">
         <div class="name"><strong>{{{name}}}</strong></div>
-        <p class="value">{{{value}}}</p>
+        <p class="value">{{#datefield}}{{#userdate}}{{value}}, {{#str}} strftimedatefullshort, core_langconfig {{/str}}{{/userdate}} {{/datefield}}{{^datefield}}{{{value}}}{{/datefield}}</p>
     </div>
 {{/fields}}

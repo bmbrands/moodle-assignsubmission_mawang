@@ -44,30 +44,10 @@ class mawang {
                 'name' => 'textarea',
                 'label' => get_string('fieldtype_textarea', 'assignsubmission_mawang'),
             ],
-            // [
-            //     'name' => 'select',
-            //     'label' => get_string('fieldtype_select', 'assignsubmission_mawang'),
-            // ],
-            // [
-            //     'name' => 'checkbox',
-            //     'label' => get_string('fieldtype_checkbox', 'assignsubmission_mawang'),
-            // ],
-            // [
-            //     'name' => 'radio',
-            //     'label' => get_string('fieldtype_radio', 'assignsubmission_mawang'),
-            // ],
-            // [
-            //     'name' => 'filepicker',
-            //     'label' => get_string('fieldtype_filepicker', 'assignsubmission_mawang'),
-            // ],
             [
                 'name' => 'date_selector',
                 'label' => get_string('fieldtype_date', 'assignsubmission_mawang'),
             ],
-            // [
-            //     'name' => 'date_time_selector',
-            //     'label' => get_string('fieldtype_datetime', 'assignsubmission_mawang'),
-            // ],
         ];
     }
 }
