@@ -150,12 +150,14 @@ class FieldManager {
             const fieldid = card.dataset.fieldid;
             const nameInput = card.querySelector('input[name="fieldname"]');
             const typeSelect = card.querySelector('select[name="fieldtype"]');
+            const requiredSelect = card.querySelector('select[name="fieldrequired"]');
             if (nameInput && typeSelect) {
                 const field = {
                     id: fieldid ? parseInt(fieldid, 10) : null,
                     name: nameInput.value.trim(),
                     type: typeSelect.value,
                     deleted: card.dataset.deleted == 1 ? true : false,
+                    required: requiredSelect.value == '1' ? true : false,
                 };
                 fields.push(field);
             } else {

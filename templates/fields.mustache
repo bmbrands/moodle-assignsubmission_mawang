@@ -36,6 +36,15 @@
                 <label for="field-name">{{#str}}fieldname, assignsubmission_mawang{{/str}}</label>
                 <input type="text" class="form-control" id="field-name" name="fieldname" value="{{name}}" placeholder="{{#str}}fieldnameplaceholder, assignsubmission_mawang{{/str}}">
             </div>
+
+            <div class="form-group d-flex">
+                <label for="field-required">{{#str}}required, assignsubmission_mawang{{/str}}</label>
+                <select class="form-control" id="field-required" name="fieldrequired">
+                    <option value="0" {{^required}}selected{{/required}}>{{#str}}required_no, assignsubmission_mawang{{/str}}</option>
+                    <option value="1" {{#required}}selected{{/required}}>{{#str}}required_yes, assignsubmission_mawang{{/str}}</option>
+                </select>
+            </div>
+
             <div class="form-group d-flex">
                 <label for="field-type">{{#str}}fieldtype, assignsubmission_mawang{{/str}}</label>
                 <select class="form-control" id="field-type" name="fieldtype">

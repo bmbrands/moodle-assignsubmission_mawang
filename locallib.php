@@ -137,7 +137,13 @@ class assign_submission_mawang extends assign_submission_plugin {
             $options = $defaultoptions[$fieldtype] ?? [];
             $options['data-fieldid'] = $field['id'];
             $options['data-assignmentid'] = $this->assignment->get_default_instance()->id;
+            
             $mform->addElement($field['type'], $fieldname, $field['name'], $options);
+            
+            // Add required validation if field is marked as required
+            if ($field['required']) {
+                $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
+            }
             $value = value::get_record(['submissionid' => $submission->id, 'fieldid' => $field['id']]);
             $draft = draft::get_record([
                 'assignment' => $this->assignment->get_default_instance()->id,
@@ -184,6 +190,7 @@ class assign_submission_mawang extends assign_submission_plugin {
                 'assignmentid' => $field['assignmentid'] ?? -1,
                 'name' => $field['name'] ?? '',
                 'type' => $field['type'] ?? 'textarea',
+                'required' => $field['required'] ?? false,
             ];
         }, $fields);
     }

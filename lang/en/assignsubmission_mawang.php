@@ -60,3 +60,7 @@ $string['words'] = 'Words {$a}';
 $string['saving'] = 'Saving...';
 $string['saved'] = 'Saved';
 $string['saveconfirm'] = 'A draft of your input is saved every 5 seconds.';
+$string['required'] = 'Required';
+$string['required_help'] = 'Whether this field is required for submission';
+$string['required_yes'] = 'Yes';
+$string['required_no'] = 'No';
