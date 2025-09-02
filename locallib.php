@@ -162,9 +162,6 @@ class assign_submission_mawang extends assign_submission_plugin {
         $formjs = $OUTPUT->render_from_template('assignsubmission_mawang/mawang', []);
         $mform->addElement('html', $formjs);
 
-        // Add submit button.
-        $mform->addElement('submit', 'submitbutton', get_string('submit'));
-
         return true;
     }
 

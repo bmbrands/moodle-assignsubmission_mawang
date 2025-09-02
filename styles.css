@@ -30,6 +30,3 @@ table#submissions .assignsubmission_mawang_summary .value {
 .saveconfirm.saving .savingicon {
     display: inline-block;
 }
-.path-mod-assign .mawang-form #fgroup_id_buttonar {
-    display: none;
-}
