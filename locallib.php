@@ -137,9 +137,9 @@ class assign_submission_mawang extends assign_submission_plugin {
             $options = $defaultoptions[$fieldtype] ?? [];
             $options['data-fieldid'] = $field['id'];
             $options['data-assignmentid'] = $this->assignment->get_default_instance()->id;
-            
+
             $mform->addElement($field['type'], $fieldname, $field['name'], $options);
-            
+
             // Add required validation if field is marked as required
             if ($field['required']) {
                 $mform->addRule($fieldname, get_string('required'), 'required', null, 'client');
@@ -255,8 +255,8 @@ class assign_submission_mawang extends assign_submission_plugin {
      * @return bool
      */
     public function is_empty(stdClass $submission) {
-        $currentsubmission = value::get_record(['submissionid' => $submission->id]);
-        return !$currentsubmission;
+        $currentsubmission = value::get_records(['submissionid' => $submission->id]);
+        return count($currentsubmission) === 0;
     }
 
     /**
