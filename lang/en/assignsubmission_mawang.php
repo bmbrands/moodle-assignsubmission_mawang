@@ -46,6 +46,7 @@ $string['fieldname_help'] = 'The name of the field that will be shown to the stu
 $string['fieldtype'] = 'Field type';
 $string['fieldandname'] = 'Field and name of field {$a}';
 $string['addfield'] = 'Add field';
+$string['addtab'] = 'Add tab';
 $string['newfield'] = 'New field';
 $string['configureform'] = 'Configuration';
 $string['configureformdescription'] = 'Form field are configurable here after saving the basic assignment setup.';

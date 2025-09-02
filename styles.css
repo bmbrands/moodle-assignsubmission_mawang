@@ -15,6 +15,10 @@ table#submissions .assignsubmission_mawang_summary .value {
     margin: 0;
 }
 
+.mawang-fieldmanager .card label {
+    min-width: 200px;
+}
+
 .saveconfirm .defaulticon .icon {
     color: var(--success);
 }

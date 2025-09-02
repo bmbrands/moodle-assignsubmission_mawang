@@ -77,6 +77,16 @@ class FieldManager {
                 // If the select is a field type, we need to save the fields.
                 await this.saveFields();
             }
+            let requiredButton = e.target.closest('input[name="fieldrequired"]');
+            if (requiredButton) {
+                // If the required button is clicked, we need to save the fields.
+                await this.saveFields();
+            }
+            let tabName = e.target.closest('input[data-action="update-tab-name"]');
+            if (tabName) {
+                // If the tab name input is changed, we need to save the fields.
+                await this.saveFields();
+            }
         });
     }
 
@@ -90,6 +100,8 @@ class FieldManager {
             'add-field': this.addField,
             'save-fields': this.saveFields,
             'delete-field': this.deleteField,
+            'add-tab': this.addTab,
+            'remove-tab': this.removeTab,
         };
         const action = btn.dataset.action;
         if (actionMap[action]) {
@@ -150,14 +162,14 @@ class FieldManager {
             const fieldid = card.dataset.fieldid;
             const nameInput = card.querySelector('input[name="fieldname"]');
             const typeSelect = card.querySelector('select[name="fieldtype"]');
-            const requiredCheckbox = card.querySelector('input[name="fieldrequired"]');
+            const requiredSelect = card.querySelector('select[name="fieldrequired"]');
             if (nameInput && typeSelect) {
                 const field = {
                     id: fieldid ? parseInt(fieldid, 10) : null,
                     name: nameInput.value.trim(),
                     type: typeSelect.value,
-                    required: requiredCheckbox.checked, // Use checked property for checkbox
                     deleted: card.dataset.deleted == 1 ? true : false,
+                    required: requiredSelect.value == '1' ? true : false,
                 };
                 fields.push(field);
             } else {
@@ -217,6 +229,55 @@ class FieldManager {
         // Remove the field from the fields array.
         this.fields = this.fields.filter(field => field.id !== parseInt(fieldId, 10));
         // Re-render the fields.
+        await this.renderFields();
+    }
+
+    /**
+     * Add a tab to separate the fields
+     * @param {HTMLElement} btn The button that was clicked to add the tab.
+     * @returns {Promise<void>} A promise that resolves when the tab is added.
+     */
+    async addTab(btn) {
+        const fieldCard = btn.closest('[data-region="field"]');
+        if (!fieldCard) {
+            throw new Error('Field card not found.');
+        }
+        const fieldId = fieldCard.dataset.fieldid;
+        if (!fieldId) {
+            throw new Error('Field ID not found.');
+        }
+
+        const fieldIndex = this.fields.findIndex(field => field.id === parseInt(fieldId, 10));
+        if (fieldIndex === -1) {
+            throw new Error('Field not found in the fields array.');
+        }
+        const field = this.fields[fieldIndex];
+        field.tabs = field.tabs || [];
+        field.tabs.push({
+            id: fieldId,
+            name: 'New Tab',
+        });
+        await this.renderFields();
+    }
+
+    /**
+     * Remove a tab from a field.
+     * @param {HTMLElement} btn The button that was clicked to remove the tab.
+     * @returns {Promise<void>} A promise that resolves when the tab is removed.
+     */
+    async removeTab(btn) {
+
+        const fieldId = btn.dataset.fieldid;
+        if (!fieldId) {
+            throw new Error('Field ID not found.');
+        }
+
+        const fieldIndex = this.fields.findIndex(field => field.id === parseInt(fieldId, 10));
+        if (fieldIndex === -1) {
+            throw new Error('Field not found in the fields array.');
+        }
+        const field = this.fields[fieldIndex];
+        field.tabs = [];
         await this.renderFields();
     }
 
