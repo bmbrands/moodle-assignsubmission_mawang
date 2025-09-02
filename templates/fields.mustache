@@ -24,11 +24,26 @@
     }
 }}
 {{#fields}}
+    {{#tabs}}
+        <ul class="nav nav-tabs border-bottom-0">
+            <li class="nav-item">
+                <div class="nav-link d-flex align-items-center p-1 bg-light">
+                <input type="text" class="form-control form-control-small border-light pe-1" name="tabname{{id}}" data-action="update-tab-name" value="{{name}}">
+                <button class="btn btn-icon" data-action="remove-tab" data-fieldid="{{id}}"><i class="fa fa-times fa-fw icon"></i></button>
+                </div>
+            </li>
+        </ul>
+    {{/tabs}}
     <div class="card border w-100 mb-3 {{#deleted}}d-none{{/deleted}}" {{#deleted}}data-deleted="1"{{/deleted}} data-region="field" data-fieldid="{{id}}">
-        <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="card-header d-flex align-items-center">
             <span>{{#str}}fieldnumber, assignsubmission_mawang, {{num}}{{/str}}</span>
-            <button type="button" class="btn btn-danger btn-sm" data-action="delete-field" data-fieldid="{{id}}">
-                {{#str}}deletefield, assignsubmission_mawang{{/str}}
+            <button type="button" class="btn btn-secondary btn-sm me-1 icon-no-margin ms-auto" data-action="add-tab" data-fieldid="{{id}}">
+                <i class="icon fa-fw fa fa-files-o"></i>
+                <span class="visually-hidden">{{#str}}addtab, assignsubmission_mawang{{/str}}</span>
+            </button>
+            <button type="button" class="btn btn-danger btn-sm icon-no-margin" data-action="delete-field" data-fieldid="{{id}}">
+                {{#pix}}e/delete, core{{/pix}}
+                <span class="visually-hidden">{{#str}}deletefield, assignsubmission_mawang{{/str}}</span>
             </button>
         </div>
         <div class="card-body">
