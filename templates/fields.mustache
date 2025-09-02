@@ -38,11 +38,10 @@
             </div>
 
             <div class="mb-2 d-flex">
-                <label for="field-required">{{#str}}required, assignsubmission_mawang{{/str}}</label>
-                <select class="form-control" id="field-required" name="fieldrequired">
-                    <option value="0" {{^required}}selected{{/required}}>{{#str}}required_no, assignsubmission_mawang{{/str}}</option>
-                    <option value="1" {{#required}}selected{{/required}}>{{#str}}required_yes, assignsubmission_mawang{{/str}}</option>
-                </select>
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="field-required{{id}}" name="fieldrequired" {{#required}}checked{{/required}}>
+                    <label class="custom-control-label" for="field-required{{id}}">{{#str}}required, assignsubmission_mawang{{/str}}</label>
+                </div>
             </div>
 
             <div class="mb-2 d-flex">
